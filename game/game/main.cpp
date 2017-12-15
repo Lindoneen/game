@@ -33,13 +33,20 @@ text.setStyle(Text::Bold);//жирный текст.
 	int gameTime = 0;
 
 	Player p("hero.png", 250, 250, 32.0, 32.0, 0, 0.0);// Начальные координаты
-
+	int createObjectForMapTimer = 0;
 	while (window.isOpen())// пока окно открыто делай
 	{
 		float time = clock.getElapsedTime().asMicroseconds();// взять время в микросекундах
 		if (p.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();
 		clock.restart();// перезапуск счетчика
 		time = time / 800;// устанавливаем скорость игры
+		
+		createObjectForMapTimer += time;//наращиваем таймер
+		if (createObjectForMapTimer>200){
+			randomMapGenerate();//генерация  камней
+			createObjectForMapTimer = 0;//обнуляем таймер
+		}
+
 
 		sf::Event event;
 		while (window.pollEvent(event))
