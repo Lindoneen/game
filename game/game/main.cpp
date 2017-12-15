@@ -1,15 +1,24 @@
 #include <SFML/Graphics.hpp>
-#include <iostream> 
+#include <iostream>
+#include <sstream>
 #include "player.h"// подключаем заголовок с классом
 #include "map.h"
 #include "global.h"
+
 
   int main()
 {
 	//Создаём окно
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();// получаем режим отображения
-	sf::RenderWindow window(sf::VideoMode(640, 480, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
+	sf::RenderWindow window(sf::VideoMode(640, 550, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
 	
+	Font font;//шрифт 
+font.loadFromFile("CyrilicOld.ttf");//передаем нашему шрифту файл шрифта
+Text text("", font, 20);//создаем объект текст. размер шрифта(в пикселях);
+//сам объект текст (не строка)
+text.setColor(Color::Red);//покрасили текст в красный.
+text.setStyle(Text::Bold);//жирный текст.
+
 	Image map_image;//объект изображения для карты
 	map_image.loadFromFile("images/tank.png");//загружаем файл для карты
 
@@ -20,11 +29,15 @@
 	
 	float CurrentFrame = 0;//хранит текущий кадр
 	Clock clock;
+	Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры 
+	int gameTime = 0;
+
 	Player p("hero.png", 250, 250, 32.0, 32.0, 0, 0.0);// Начальные координаты
 
 	while (window.isOpen())// пока окно открыто делай
 	{
 		float time = clock.getElapsedTime().asMicroseconds();// взять время в микросекундах
+		if (p.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();
 		clock.restart();// перезапуск счетчика
 		time = time / 800;// устанавливаем скорость игры
 
@@ -35,6 +48,7 @@
 				window.close();
 		} // всё
 
+		if (p.life) {
 		//движение по нажатию клавиш
 	if ((Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A)))) {
 		p.dir = 1; p.speed = 0.1;
@@ -94,9 +108,15 @@
 			window.draw(s_map);//рисуем квадратики на экран
 			}
 
-	
+	std::ostringstream playerHealthString, gameTimeString;//объявили переменную здоровья и времени
+playerHealthString << p.health; gameTimeString << gameTime;//формируем строку
+text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str());//задаем строку тексту
+text.setPosition(20, 500);//задаем позицию текста
+window.draw(text);//рисуем этот текст
+
 		window.draw(p.sprite);//рисуем спрайт
 		window.display();// выводим на экран
+	}
 	}
 	return 0;
 }

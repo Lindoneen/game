@@ -13,6 +13,9 @@ Player::Player(std::string F, float X, float Y, float W, float H, int DIR, float
 	File = F; //имя файла
 	w = W; h = H; //высота и ширина спрайта
 	dir=DIR; speed=SPEED;
+	health = 100;
+		//инициализировали переменную жизни в конструкторе
+	life = true;//инициализировали логическую переменную жизни
 	image.loadFromFile("images/" + File);//загружаем изображение
     image.createMaskFromColor(Color(255, 255, 255));// убераем белый фон
 	texture.loadFromImage(image); // загружаем изображение в текстуру
@@ -38,6 +41,7 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 	speed = 0;    //обнуляем скорость, чтобы персонаж остановился.
 	sprite.setPosition(x, y); //выводим спрайт в позицию (x, y). 
 	interactionWithMap();	
+	if (health <= 0){ life = false;}
 }
  
 void Player::interactionWithMap()
@@ -64,6 +68,7 @@ void Player::interactionWithMap()
 			}
 		}	
 			if (TileMap[i][j] == 's') { //если символ равен 's' (камень)
+				health -= 40;
 				x = 300; y = 300;//какое-то действие...телепортация героя
 				TileMap[i][j] = ' ';//убираем камень
 			}
