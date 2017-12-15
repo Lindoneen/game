@@ -1,14 +1,22 @@
 #include <SFML/Graphics.hpp>
 #include <iostream> 
 #include "player.h"// подключаем заголовок с классом
-
+#include "map.h"
+#include "global.h"
 
   int main()
 {
 	//Создаём окно
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();// получаем режим отображения
-	sf::RenderWindow window(sf::VideoMode(600, 480, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
+	sf::RenderWindow window(sf::VideoMode(640, 480, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
+	
+	Image map_image;//объект изображения для карты
+	map_image.loadFromFile("images/tank.png");//загружаем файл для карты
 
+	Texture map;//текстура карты
+	map.loadFromImage(map_image);//заряжаем текстуру картинкой
+	Sprite s_map;//создаём спрайт для карты
+	s_map.setTexture(map);//заливаем текстуру спрайтом
 	
 	float CurrentFrame = 0;//хранит текущий кадр
 	Clock clock;
@@ -67,9 +75,26 @@
 			p.sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 33, 32, 32)); 				
 			
 		}
+			window.clear();// чистим окно
 		p.update(time);// постоянная перерисовка (или если что-то еще написано в апдейт методе)
 
-		window.clear();// чистим окно
+		for (int i = 0; i < HEIGHT_MAP; i++)
+		for (int j = 0; j < WIDTH_MAP; j++)
+		{
+		if (TileMap[i][j] == ' ')  s_map.setTextureRect(IntRect(133, 100, 32, 32)); //если
+				//встретили символ пробел, то рисуем 1-й квадратик
+		if (TileMap[i][j] == 's')  s_map.setTextureRect(IntRect(300, 0, 32, 32));//если
+				//встретили символ s, то рисуем 2й квадратик
+		if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(0, 102, 32, 32));//если
+				//встретили символ 0, то рисуем 3й квадратик
+		if ((TileMap[i][j] == 't')) s_map.setTextureRect(IntRect(299, 101, 30, 30));//если
+				//встретили символ 0, то рисуем 3й квадратик
+			s_map.setPosition(j * 32, i * 32);//раскладываем квадратики в карту.
+
+			window.draw(s_map);//рисуем квадратики на экран
+			}
+
+	
 		window.draw(p.sprite);//рисуем спрайт
 		window.display();// выводим на экран
 	}

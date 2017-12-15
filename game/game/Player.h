@@ -14,5 +14,6 @@ float x, y, w, h, dx, dy, speed; //координаты игрока х и у, высота и ширина спра
 	Sprite sprite;//сфмл спрайт
 	Player(std::string F, float X, float Y, float W, float H, int DIR, float SPEED);
 	void update(float time);
+	void interactionWithMap();
 };
 #endif
