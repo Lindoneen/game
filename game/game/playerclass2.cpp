@@ -1,33 +1,36 @@
 #include <SFML/Graphics.hpp>
 #include "player.h"
 #include "map.h"
+#include <iostream>
 #include "global.h"
 
 //playerclass2.cpp
-
+using namespace std;
 using namespace sf;
 
 
-Player::Player(std::string F, float X, float Y, float W, float H, int DIR, float SPEED)
+Player::Player(std::string F, float W, float H, int DIR, float SPEED)
 { 
 	File = F; //им€ файла
 	w = W; h = H; //высота и ширина спрайта
 	dir=DIR; speed=SPEED;
 	health = 100;
+	MaxObj=0;
+	x=50;
+	y=50;
 		//инициализировали переменную жизни в конструкторе
 	life = true;//инициализировали логическую переменную жизни
 	image.loadFromFile("images/" + File);//загружаем изображение
     image.createMaskFromColor(Color(255, 255, 255));// убераем белый фон
 	texture.loadFromImage(image); // загружаем изображение в текстуру
 	sprite.setTexture(texture); //заливаем спрайт текстурой
-	x = X; y = Y; // начальные координаты
 	sprite.setTextureRect(IntRect(33, 0, w, h)); //ѕр€моугольник дл€ спрайта
 }
-
 
 void Player::update(float time) //функци€ бновлени€ объекта класса. ѕринимает в себ€ float time -
 	//врем€ SFML, вследствие чего работает бесконечно, дава€ персонажу движение.
 {
+	
 	switch (dir)//ƒаем скорость по X Y в зависимости от направлени€
 	{
 	case 0: dx = speed; dy = 0; break; //скорость по X вправо
@@ -41,9 +44,20 @@ void Player::update(float time) //функци€ бновлени€ объекта класса. ѕринимает в 
 	speed = 0;    //обнул€ем скорость, чтобы персонаж остановилс€.
 	sprite.setPosition(x, y); //выводим спрайт в позицию (x, y). 
 	interactionWithMap();	
-	if (health <= 0){ life = false;}
+	if (health <= 0){
+		life = false;
+
+			
+	}
 }
- 
+ float Player::GetPlayerCoordinateX()
+ {
+	 return x;
+ }
+  float Player::GetPlayerCoordinateY()
+ {
+	 return y;
+ }
 void Player::interactionWithMap()
 {
 	for (int i = y / 32; i < (y + h) / 32; i++)
@@ -69,7 +83,7 @@ void Player::interactionWithMap()
 		}	
 			if (TileMap[i][j] == 's') { //если символ равен 's' (камень)
 				health -= 40;
-				x = 300; y = 300;//какое-то действие...телепортаци€ геро€
+				MaxObj-= 1;
 				TileMap[i][j] = ' ';//убираем камень
 			}
 	}
