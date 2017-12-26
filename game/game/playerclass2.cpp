@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include "player.h"
+
+#include "Entity.h"
+#include "Player.h"
 #include "map.h"
 #include <iostream>
 #include "global.h"
@@ -9,8 +11,14 @@ using namespace std;
 using namespace sf;
 
 
-Player::Player(std::string F, float W, float H, int DIR, float SPEED)
+Player::Player(Image &image, float X, float Y, int W, int H, std::string Name): Entity(image,X,Y,W,H,Name)
 { 
+	playerScore=0;
+	MaxObj=0;
+	state=stay;
+	if (name=="Player1"){
+	sprite.setTextureRect(IntRect(33, 0, w, h)); //Прямоугольник для спрайта
+	/*
 	File = F; //имя файла
 	w = W; h = H; //высота и ширина спрайта
 	dir=DIR; speed=SPEED;
@@ -25,31 +33,79 @@ Player::Player(std::string F, float W, float H, int DIR, float SPEED)
 	texture.loadFromImage(image); // загружаем изображение в текстуру
 	sprite.setTexture(texture); //заливаем спрайт текстурой
 	sprite.setTextureRect(IntRect(33, 0, w, h)); //Прямоугольник для спрайта
+	*/
+}
 }
 
 void Player::update(float time) //функция бновления объекта класса. Принимает в себя float time -
 	//время SFML, вследствие чего работает бесконечно, давая персонажу движение.
 {
-	
-	switch (dir)//Даем скорость по X Y в зависимости от направления
-	{
-	case 0: dx = speed; dy = 0; break; //скорость по X вправо
-	case 1: dx = -speed; dy = 0; break;//по X влево
-	case 2: dx = 0; dy = speed; break;//по Y вниз
-	case 3: dx = 0; dy = -speed; break;//по Y вверх
-	}
-
-	x += dx*time; //движение по X
-	y += dy*time; //движение по Y
-	speed = 0;    //обнуляем скорость, чтобы персонаж остановился.
-	sprite.setPosition(x, y); //выводим спрайт в позицию (x, y). 
-	interactionWithMap();	
-	if (health <= 0){
-		life = false;
-
+	if (life) {//проверяем, жив ли герой
+		control();//функция управления персонажем
+		switch (state)//тут делаются различные действия в зависимости от состояния
+		{
+		case right:{
+			dx=speed;
+			dy=0;
+			CurrentFrame += 0.005*time;// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
 			
+			if (CurrentFrame > 8) CurrentFrame -= 8; 
+			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 66, 32, 32)); 			
+			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			break;
+			}
+         case left:{//состояние идти влево
+			dx = -speed;
+			dy=0;
+			CurrentFrame += 0.005*time;// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
+
+			if (CurrentFrame > 8) CurrentFrame -= 8; 
+			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 99, 32, 32)); // перемещееие по кадрам влево
+			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			break;
+			}
+		case up:{//идти вверх
+			dx = 0;
+			dy = -speed;
+			CurrentFrame += 0.005*time; 
+			if (CurrentFrame > 8) CurrentFrame -= 8; 
+			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 0, 32, 32));			
+			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			break;
+			}
+		case down:{//идти вниз
+			dx = 0;
+			dy = speed;
+			CurrentFrame += 0.005*time; 
+			if (CurrentFrame > 8) CurrentFrame -= 8; 
+			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 33, 32, 32)); 				
+			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			break;
+			}
+				  if (speed=0) state=stay;
+		case stay:{//стоим
+			dy = speed;
+			dx = speed;
+			break;
+			}
+
+		}
+
+        x += dx*time; //движение по “X”
+		checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х
+
+		y += dy*time; //движение по “Y”
+		checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y
+
+		speed = 0;    //обнуляем скорость, чтобы персонаж остановился.
+		state = stay; //состояние - стоит
+
+		sprite.setPosition(x, y); //переставляем спрайт в новую позицию (x, y).
+
+		if (health <= 0){ life = false; }//если жизней меньше 0, либо равно 0, то умираем 
+		}
 	}
-}
+
  float Player::GetPlayerCoordinateX()
  {
 	 return x;
@@ -88,7 +144,47 @@ void Player::interactionWithMap()
 			}
 	}
 
+}
+void Player::control()
+{
+			if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				state = left;
+				speed = 0.1;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				state = right;
+				speed = 0.1;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Up)) {
+				state = up;
+				speed = 0.1;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Down)) {
+				state = down;
+				speed = 0.1;
+			}
+		}
+void Player::checkCollisionWithMap(float Dx, float Dy)	{
+for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
+	for (int j = x / 32; j<(x + w) / 32; j++)
+	{
+		if (TileMap[i][j] == '0')//если элемент тайлик земли
+		{
+		if (Dy > 0) { y = i * 32 - h;  dy = 0; }//по Y 
+		if (Dy < 0) { y = i * 32 + 32; dy = 0; }//столкновение с верхними краями карты
+		if (Dx > 0) { x = j * 32 - w; dx = 0; }//с правым краем карты
+		if (Dx < 0) { x = j * 32 + 32; dx = 0; }// с левым краем карты
+		}	
+		if (TileMap[i][j] == 's') {
+			health -= 40; //если взяли камень, переменная playerScore=playerScore+1;
+			TileMap[i][j] = ' ';
+		}
+		
+	}
 };
+
 
 
 

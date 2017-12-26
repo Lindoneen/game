@@ -1,28 +1,24 @@
 //Player.h
 #ifndef Player_h
 #define Player_h
+#include <SFML/Graphics.hpp>
+#include "Entity.h"
+
 
 using namespace sf;
-class Player { // класс Игрока
-private: 
-float x, y;
+using namespace std;
+class Player:public Entity  { // класс Игрока
+
 public:
-float w, h, dx, dy, speed; //координаты игрока х и у, высота и ширина спрайта
-								//ускорение и скорость
-    int MaxObj;
-	int dir, health; 
-	bool life;
-	std::string File; //имя файла
-	Image image;//сфмл изображение
-    Texture expl;
-	Sprite s_expl;
-	Texture texture;//сфмл текстура
-	Sprite sprite;//сфмл спрайт
-	Player(std::string F, float W, float H, int DIR, float SPEED);
+    int MaxObj,playerScore;
+	Player(Image &image, float X, float Y, int W, int H, std::string Name);
 	void update(float time);
 	void interactionWithMap();
 	float GetPlayerCoordinateX();
 	float GetPlayerCoordinateY();
+	void control();
+	void checkCollisionWithMap(float Dx, float Dy);
+
 	
 };
 #endif

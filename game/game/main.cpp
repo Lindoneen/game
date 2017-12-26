@@ -4,15 +4,16 @@
 #include "player.h"// подключаем заголовок с классом
 #include "map.h"
 #include "global.h"
-#include "Camera.h"
+
+#include "Entity.h"
 
 using namespace std;
   int main()
-{
-	//Создаём окно
+  {
+//Создаём окно
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();// получаем режим отображения
-	sf::RenderWindow window(sf::VideoMode(640, 550, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
-	camera.reset(sf::FloatRect(0,0,640,550));
+	sf::RenderWindow window(sf::VideoMode(640, 700, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображения
+	//camera.reset(sf::FloatRect(0,0,640,550));
 	Font font;//шрифт 
 	Font death_font;
 	death_font.loadFromFile("CHILLER.ttf");
@@ -53,8 +54,13 @@ death_text.setStyle(Text::Bold);
 	Clock clock;
 	Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры 
 	int gameTime = 0;
+	Image heroImage;
+	
+	heroImage.loadFromFile("images/hero.png");
+	heroImage.createMaskFromColor(Color(255, 255, 255));
+	Player p(heroImage,50,50, 32.0, 32.0,"Player1");
+	
 
-	Player p("hero.png", 32.0, 32.0, 0, 0.0);// Начальные координаты
 	int createObjectForMapTimer = 0;
 	int ret = 0;
 	while (window.isOpen())// пока окно открыто делай
@@ -64,11 +70,12 @@ death_text.setStyle(Text::Bold);
 		if (p.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();
 		clock.restart();// перезапуск счетчика
 		time = time / 800;// устанавливаем скорость игры
-
+		
 		createObjectForMapTimer += time;//наращиваем таймер
-		if (createObjectForMapTimer>100){
+		if (createObjectForMapTimer>400){
 			
-			if (p.MaxObj<3){
+			if (p.MaxObj<3)
+			{
 				p.MaxObj+=1;
 			    ret=p.MaxObj;
 			randomMapGenerate();//генерация  камней
@@ -89,50 +96,21 @@ death_text.setStyle(Text::Bold);
 
 		
 		
-		if (p.life) {
-		//движение по нажатию клавиш
-	if ((Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A)))) {
-		p.dir = 1; p.speed = 0.1;
 		
-		
-		CurrentFrame += 0.005*time;// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
+		    p.update(time);
+			
 
-			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			p.sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 99, 32, 32)); // перемещееие по кадрам влево
-			getPlayerCamera(p.GetPlayerCoordinateX(),p.GetPlayerCoordinateY());
-		}
 
-		if ((Keyboard::isKeyPressed(Keyboard::Right) || 
-	 	 	 	 	 	 	 (Keyboard::isKeyPressed(Keyboard::D)))) {	
-								 p.dir = 0; p.speed = 0.1;//направление вправо
-			CurrentFrame += 0.005*time; 
-			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			p.sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 66, 32, 32)); 			
-			getPlayerCamera(p.GetPlayerCoordinateX(),p.GetPlayerCoordinateY());
-	      
 
-		}
+		//	cameramap(time);
+			//window.setView(camera);
 
-		if ((Keyboard::isKeyPressed(Keyboard::Up) || 
-	 	 	 	 	 	 	 (Keyboard::isKeyPressed(Keyboard::W)))) {
-								 p.dir = 3; p.speed = 0.1;//направление вверх
-			CurrentFrame += 0.005*time; 
-			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			p.sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 0, 32, 32));			
-			 getPlayerCamera(p.GetPlayerCoordinateX(),p.GetPlayerCoordinateY());
-		}
+			//Проверка пересечения игрока с врагами
+//Если пересечение произошло, то "health = 0", игрок обездвижевается и 
+//выводится сообщение "you are lose"
 
-		if ((Keyboard::isKeyPressed(Keyboard::Down) || 
-	 	 	 	 	 	 	 (Keyboard::isKeyPressed(Keyboard::S)))) {
-								 p.dir = 2; p.speed = 0.1;//направление вниз
-			CurrentFrame += 0.005*time; 
-			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			p.sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 33, 32, 32)); 				
-			getPlayerCamera(p.GetPlayerCoordinateX(),p.GetPlayerCoordinateY());
-		}
-		    p.update(time);// постоянная перерисовка (или если что-то еще написано в апдейт методе)
-			cameramap(time);
-			window.setView(camera);
+
+	
 			window.clear();// чистим окно
 		                 
 
@@ -149,6 +127,9 @@ death_text.setStyle(Text::Bold);
 				//встретили символ 0, то рисуем 3й квадратик
 			s_map.setPosition(j * 32, i * 32);//раскладываем квадратики в карту.
 
+			
+			
+
 			window.draw(s_map);//рисуем квадратики на экран
 			
 			}
@@ -157,14 +138,11 @@ death_text.setStyle(Text::Bold);
 	std::ostringstream playerHealthString, gameTimeString;//объявили переменную здоровья и времени
 playerHealthString << p.health; gameTimeString << gameTime;//формируем строку
 text.setString("Здоровье: " + playerHealthString.str() + "\nВремя игры: " + gameTimeString.str());//задаем строку тексту
-text.setPosition(camera.getCenter().x-200, camera.getCenter().y-250);//задаем позицию текста
+//text.setPosition(camera.getCenter().x-200, camera.getCenter().y-250);//задаем позицию текста
 window.draw(text);//рисуем этот текст
-
-		window.draw(p.sprite);//рисуем спрайт
-		window.display();// выводим на экран
-
-	}
-		else
+window.draw(p.sprite);	
+window.display();
+		if (p.life==false) 
 		{    
 		
 			CurrentExplFrame += 0.001*time;// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
@@ -172,17 +150,17 @@ window.draw(text);//рисуем этот текст
 			if (CurrentExplFrame > 3) CurrentExplFrame -= 3; 
 			s_expl.setTextureRect(IntRect((1+33 * int(CurrentExplFrame)), 1, 32, 32)); // перемещееие по кадрам влево
 			s_expl.setPosition(p.GetPlayerCoordinateX(), p.GetPlayerCoordinateY());
+			death_text.setString("LOL YOU DIED LOL LOL YOU DIED ");//задаем строку тексту
+        //death_text.setPosition(camera.getCenter().x-180, camera.getCenter().y-100);//задаем позицию текста
+        window.draw(death_text);//рисуем этот текст
+		
+			window.draw(p.sprite);
 			window.draw(s_expl);
 			window.display();
 			 
-		death_text.setString("LOL YOU DIED LOL LOL YOU DIED ");//задаем строку тексту
-        death_text.setPosition(camera.getCenter().x-180, camera.getCenter().y-100);//задаем позицию текста
-        window.draw(death_text);//рисуем этот текст
 		
 		}
-	
-
 	}
-	window.clear();
+window.clear();
 	return 0;
-}
+	}
