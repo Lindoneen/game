@@ -51,7 +51,7 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 			
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
 			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 66, 32, 32)); 			
-			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			//getplayercoor(GetPlayerCoordinateX(),GetPlayerCoordinateY());
 			break;
 			}
          case left:{//состояние идти влево
@@ -61,7 +61,7 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
 			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 99, 32, 32)); // перемещееие по кадрам влево
-			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			//getplayercoor(GetPlayerCoordinateX(),GetPlayerCoordinateY());
 			break;
 			}
 		case up:{//идти вверх
@@ -70,7 +70,7 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 			CurrentFrame += 0.005*time; 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
 			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 0, 32, 32));			
-			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			//getplayercoor(GetPlayerCoordinateX(),GetPlayerCoordinateY());
 			break;
 			}
 		case down:{//идти вниз
@@ -79,7 +79,7 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 			CurrentFrame += 0.005*time; 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
 			sprite.setTextureRect(IntRect((33 * int(CurrentFrame)), 33, 32, 32)); 				
-			//getPlayerCamera(GetPlayerCoordinateX(),GetPlayerCoordinateY());
+			//getplayercoor(GetPlayerCoordinateX(),GetPlayerCoordinateY());
 			break;
 			}
 				  if (speed=0) state=stay;
