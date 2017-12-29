@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include <SFML\Graphics.hpp>
 #include "Entity.h"
 #include "Enemy.h"
@@ -10,9 +10,8 @@ using namespace sf;
 Enemy::Enemy(Image &image, float X, float Y, int W, int H, std::string Name) :Entity(image, X, Y, W, H, Name){
 	if (name == "EasyEnemy"){
 		
-		//Задаем спрайту один прямоугольник для
-		//вывода одного игрока. IntRect – для приведения типов
-		sprite.setTextureRect(IntRect(332, 135, w, h));
+		
+		sprite.setTextureRect(IntRect(331, 135, w, h));
 		
 		direction = rand() % (3); //Направление движения врага задаём случайным образом
 			//через генератор случайных чисел
@@ -58,7 +57,7 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновен
 			CurrentFrame += 0.005*time;// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
 			
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			sprite.setTextureRect(IntRect((330+33 * int(CurrentFrame)), 201, 32, 32)); 			
+			sprite.setTextureRect(IntRect((331+33 * int(CurrentFrame)), 199, 32, 32)); 			
 			
 			break;
 			}
@@ -69,7 +68,7 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновен
 		// переменная отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			sprite.setTextureRect(IntRect((330+33 * int(CurrentFrame)), 234, 32, 32)); // перемещееие по кадрам влево
+			sprite.setTextureRect(IntRect((331+33 * int(CurrentFrame)), 232, 32, 32)); // перемещееие по кадрам влево
 			
 			break;
 			}
@@ -78,7 +77,7 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновен
 			dy = -speed;
 			CurrentFrame += 0.005*time; 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			sprite.setTextureRect(IntRect((330+33 * int(CurrentFrame)), 134, 32, 32));			
+			sprite.setTextureRect(IntRect((331+33 * int(CurrentFrame)), 133, 32, 32));			
 			
 			break;
 			}
@@ -87,7 +86,7 @@ void Enemy::checkCollisionWithMap(float Dx, float Dy)//ф-ция проверки столкновен
 			dy = speed;
 			CurrentFrame += 0.005*time; 
 			if (CurrentFrame > 8) CurrentFrame -= 8; 
-			sprite.setTextureRect(IntRect((330+33 * int(CurrentFrame)), 167 , 32, 32)); 				
+			sprite.setTextureRect(IntRect((331+33 * int(CurrentFrame)), 166 , 32, 32)); 				
 			
 			break;
 			}

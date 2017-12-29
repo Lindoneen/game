@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
@@ -13,7 +14,7 @@ using namespace sf;
 
 Player::Player(Image &image, float X, float Y, int W, int H, std::string Name): Entity(image,X,Y,W,H,Name)
 { 
-	playerScore=0;
+	
 	MaxObj=0;
 	state=stay;
 	if (name=="Player1"){
@@ -36,7 +37,27 @@ Player::Player(Image &image, float X, float Y, int W, int H, std::string Name): 
 	*/
 }
 }
+void Player::control()
+{
+			if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				state = left;
+				speed = 0.08;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				state = right;
+				speed = 0.08;
+			}
 
+			if (Keyboard::isKeyPressed(Keyboard::Up)) {
+				state = up;
+				speed = 0.08;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Down)) {
+				state = down;
+				speed = 0.08;
+			}
+		}
 void Player::update(float time) //функция бновления объекта класса. Принимает в себя float time -
 	//время SFML, вследствие чего работает бесконечно, давая персонажу движение.
 {
@@ -82,8 +103,11 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 			//getplayercoor(GetPlayerCoordinateX(),GetPlayerCoordinateY());
 			break;
 			}
-				  if (speed=0) state=stay;
-		case stay:{//стоим
+
+		
+		case stay:
+			 {//стоим
+				 
 			dy = speed;
 			dx = speed;
 			break;
@@ -96,10 +120,12 @@ void Player::update(float time) //функция бновления объекта класса. Принимает в 
 
 		y += dy*time; //движение по “Y”
 		checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y
-
+		
+		
 		speed = 0;    //обнуляем скорость, чтобы персонаж остановился.
-		state = stay; //состояние - стоит
-
+		
+		//состояние - стоит
+		
 		sprite.setPosition(x, y); //переставляем спрайт в новую позицию (x, y).
 
 		if (health <= 0){ life = false; }//если жизней меньше 0, либо равно 0, то умираем 
@@ -145,27 +171,7 @@ void Player::interactionWithMap()
 	}
 
 }
-void Player::control()
-{
-			if (Keyboard::isKeyPressed(Keyboard::Left)) {
-				state = left;
-				speed = 0.1;
-			}
-			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				state = right;
-				speed = 0.1;
-			}
 
-			if (Keyboard::isKeyPressed(Keyboard::Up)) {
-				state = up;
-				speed = 0.1;
-			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Down)) {
-				state = down;
-				speed = 0.1;
-			}
-		}
 void Player::checkCollisionWithMap(float Dx, float Dy)	{
 for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
 	for (int j = x / 32; j<(x + w) / 32; j++)

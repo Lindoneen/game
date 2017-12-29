@@ -16,7 +16,7 @@ Bullet::Bullet(Image &image, float X, float Y, int W, int H, std::string  Name, 
 		SPEED = speed;
 		w = h = 16; //размеры изображения пули
 		life = true; //пуля жива
-		sprite.setTextureRect(IntRect(33, 0, w, h));
+		sprite.setTextureRect(IntRect(272, 8, w, h));
 	}
 
 
@@ -40,7 +40,7 @@ Bullet::Bullet(Image &image, float X, float Y, int W, int H, std::string  Name, 
 		if (y <= 0) y = 20;
 
 		if (x >= 920) x = 910;// задержка пули в правой стене, чтобы при проседании кадров она случайно не вылетела за предел карты и не было ошибки (сервер может тормозить!)
-		if (y >= 640) y = 620;
+		if (y >= 760) y = 740;
 
 			for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
 				for (int j = x / 32; j < (x + w) / 32; j++)

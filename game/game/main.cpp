@@ -1,33 +1,21 @@
-
+#include "stdafx.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <sstream>
-#include <list>
+#include "player.h"// подключаем заголовок с классом
 #include "map.h"
 #include "global.h"
+#include "View.h"
 #include "Entity.h"
-#include "Player.h"
-#include "Enemy.h"
 
-
-
-
-//playerclass2.cpp
 using namespace std;
-using namespace sf;
-
-
-
-
-
-
-
   int main()
-{
-	//—оздаЄм окно
+  {
+//—оздаЄм окно
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();// получаем режим отображени€
-	sf::RenderWindow window(sf::VideoMode(1400, 1000, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображени€
-//	camera.reset(sf::FloatRect(0,0,640,550));
+	sf::RenderWindow window(sf::VideoMode(640, 700, desktop.bitsPerPixel), "TANKZZZ");// устанавливаем размер окна и режим отображени€
+	view.reset(sf::FloatRect(0, 0, 640, 700));
+	//camera.reset(sf::FloatRect(0,0,640,550));
 	Font font;//шрифт 
 	Font death_font;
 	death_font.loadFromFile("CHILLER.ttf");
@@ -72,27 +60,8 @@ death_text.setStyle(Text::Bold);
 	
 	heroImage.loadFromFile("images/hero.png");
 	heroImage.createMaskFromColor(Color(255, 255, 255));
-	Image easyEnemyImage;
-	easyEnemyImage.loadFromFile("images/Tank.png");
-	easyEnemyImage.createMaskFromColor(Color(0, 0, 0));
 	Player p(heroImage,50,50, 32.0, 32.0,"Player1");
 	
-	std::list<Entity*>  enemies; //список врагов
-	std::list<Entity*>::iterator it; //итератор чтобы проходить по элементам списка
-	const int ENEMY_COUNT = 5;	//максимальное количество врагов в игре
-    srand (time(0));
-	int enemiesCount = 0;	//текущее количество врагов в игре
-	for (int i = 0; i < ENEMY_COUNT; i++)
-	{
-		
-	float xr = 100 + rand() % 400; //случайна€ координата врага на поле игры по оси УxФ
-	float yr = 150 + rand() % 350; //случайна€ координата врага на поле игры по оси УyФ
-		//создаем врагов и помещаем в список
-		enemies.push_back(new Enemy(easyEnemyImage, xr, yr, 32, 32, "EasyEnemy"));
-		enemiesCount += 1; //увеличили счЄтчик врагов
-		
-	}
-
 
 	int createObjectForMapTimer = 0;
 	int ret = 0;
@@ -102,7 +71,7 @@ death_text.setStyle(Text::Bold);
 		float time = clock.getElapsedTime().asMicroseconds();// вз€ть врем€ в микросекундах
 		if (p.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();
 		clock.restart();// перезапуск счетчика
-		time = time / 1200;// устанавливаем скорость игры
+		time = time / 800;// устанавливаем скорость игры
 		
 		createObjectForMapTimer += time;//наращиваем таймер
 		if (createObjectForMapTimer>400){
@@ -132,42 +101,18 @@ death_text.setStyle(Text::Bold);
 		
 		    p.update(time);
 			
-		//оживл€ем врагов
-		for (it = enemies.begin(); it != enemies.end(); it++)
-		{
-			(*it)->update(time); //запускаем метод update()
-		}
 
 
 
-//			cameramap(time);
-		//	window.setView(camera);
+		//	cameramap(time);
+			//window.setView(camera);
 
 			//ѕроверка пересечени€ игрока с врагами
 //≈сли пересечение произошло, то "health = 0", игрок обездвижеваетс€ и 
 //выводитс€ сообщение "you are lose"
 
-if (p.life == true){//если игрок жив
-	for (it = enemies.begin(); it != enemies.end(); it++){//бежим по списку врагов
-		if ((p.getRect().intersects((*it)->getRect())) && ((*it)->name == "EasyEnemy"))
-				{
-					if((*it)->dx>0){
-						//eсли враг едет в право
-						(*it)->x=p.x-100;
-					}
-					if((*it)->dx<0){
-						(*it)->x=p.x+100;//eсли враг едет влево
-					}
-					if((*it)->dy>0){
-						(*it)->x=p.x-100; //eсли враг едет вниз
-					}
-					if((*it)->dy<0){
-						(*it)->x=p.x+100; //eсли враг едет вниз
-					}
-					std::cout << "you are lose";
-				}
-			}
-		}
+
+	
 			window.clear();// чистим окно
 		                 
 
@@ -195,22 +140,16 @@ if (p.life == true){//если игрок жив
 	std::ostringstream playerHealthString, gameTimeString;//объ€вили переменную здоровь€ и времени
 playerHealthString << p.health; gameTimeString << gameTime;//формируем строку
 text.setString("«доровье: " + playerHealthString.str() + "\n¬рем€ игры: " + gameTimeString.str());//задаем строку тексту
-//text.setPosition(camera.getCenter().x-200, camera.getCenter().y-250);//задаем позицию текста
+text.setPosition(view.getCenter().x-200, view.getCenter().y-250);//задаем позицию текста
 window.draw(text);//рисуем этот текст
-if (p.life==true) 
-		
-		{  
-		window.draw(p.sprite);//рисуем спрайт
-		for (it = enemies.begin(); it != enemies.end(); it++)
-		{
-			window.draw((*it)->sprite); //рисуем enemies объекты
-		}
-
-		window.display();// выводим на экран
-
-       }
-		else 
-		
+if (p.state!=5)
+{
+	getplayercoor(p.GetPlayerCoordinateX(),p.GetPlayerCoordinateY());
+}
+window.setView(view);
+window.draw(p.sprite);	
+window.display();
+		if (p.life==false) 
 		{    
 		
 			CurrentExplFrame += 0.001*time;// переменна€ отвечает за то сколько времени должно пройти, чтобы перейти на следующий кадр
@@ -219,7 +158,7 @@ if (p.life==true)
 			s_expl.setTextureRect(IntRect((1+33 * int(CurrentExplFrame)), 1, 32, 32)); // перемещееие по кадрам влево
 			s_expl.setPosition(p.GetPlayerCoordinateX(), p.GetPlayerCoordinateY());
 			death_text.setString("LOL YOU DIED LOL LOL YOU DIED ");//задаем строку тексту
-//        death_text.setPosition(camera.getCenter().x-180, camera.getCenter().y-100);//задаем позицию текста
+        death_text.setPosition(view.getCenter().x-180, view.getCenter().y-100);//задаем позицию текста
         window.draw(death_text);//рисуем этот текст
 		
 			window.draw(p.sprite);
@@ -232,4 +171,3 @@ if (p.life==true)
 window.clear();
 	return 0;
 	}
-	
