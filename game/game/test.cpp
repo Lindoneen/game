@@ -57,7 +57,7 @@ death_text.setStyle(Text::Bold);
 	Image expl_image;
 	expl_image.loadFromFile("images/tank.png" );//загружаем изображение
 
-    expl_image.createMaskFromColor(Color(0, 0, 0));// убераем белый фон
+    expl_image.createMaskFromColor(Color(255, 255, 255));// убераем белый фон
 
 	Texture expl;
 	expl.loadFromImage(expl_image); // загружаем изображение в текстуру
@@ -79,10 +79,10 @@ death_text.setStyle(Text::Bold);
 	heroImage.createMaskFromColor(Color(255, 255, 255));
 	Image BulletImage;//изображение для пули
     BulletImage.loadFromFile("images/tank.png");//загрузили картинку в объект изображения
-	BulletImage.createMaskFromColor(Color(0, 0, 0));
+	BulletImage.createMaskFromColor(Color(255, 255, 255));
 	Image easyEnemyImage;
 	easyEnemyImage.loadFromFile("images/tank.png");
-	easyEnemyImage.createMaskFromColor(Color(0, 0, 0));
+	easyEnemyImage.createMaskFromColor(Color(255, 255, 255));
 	Player p(heroImage,50,50, 32.0, 32.0,"Player1");
 	
 	std::list<Entity*>  enemies;//список врагов
@@ -159,74 +159,7 @@ death_text.setStyle(Text::Bold);
 		
 		    p.update(time);
 			
-		//оживляем врагов
-			/*
-		for (it = enemies.begin(); it != enemies.end(); it++)
-		{
-			(*it)->update(time); //запускаем метод update()
-
-		}
-
 		
-			for (it = enemies.begin(); it != enemies.end(); it++)
-		{
-		
-	
-			if((((*it)->left)==true)&&(p.y==(*it)->y))
-			{
-				
-			
-						if (bulletSpawnTimer<800);
-			bulletSpawnTimer++;
-			if(bulletSpawnTimer>=800)
-	{
-			Bullets.push_back(new Bullet(BulletImage,(*it)->x, (*it)->y, 16, 16, "eBullet",0,0.7));
-			  bulletSpawnTimer=0;
-			break;
-			}
-
-			}
-			
-			
-				if((((*it)->right)==true)&&(p.y==(*it)->y))
-			{
-	        		if (bulletSpawnTimer<400);
-			bulletSpawnTimer++;
-			if(bulletSpawnTimer>=400)
-	{
-			Bullets.push_back(new Bullet(BulletImage,(*it)->x, (*it)->y, 16, 16, "eBullet",1,0.4));
-			  bulletSpawnTimer=0;
-			break;
-			}
-			}
-			
-			
-			if/*(p.x==(*it)->x)&&(p.y>(*it)->y)
-			{
-	   		if (bulletSpawnTimer<400);
-			bulletSpawnTimer++;
-			if(bulletSpawnTimer>=400)
-	{
-			Bullets.push_back(new Bullet(BulletImage,(*it)->x, (*it)->y, 16, 16, "eBullet",3,0.40));
-			bulletSpawnTimer=0;
-			
-			}
-			}
-			if/*(p.x==(*it)->x)&&(p.y<(*it)->y) 
-			{
-	   		if (bulletSpawnTimer<400);
-			bulletSpawnTimer++;
-			if(bulletSpawnTimer>=400)
-	{
-			Bullets.push_back(new Bullet(BulletImage,(*it)->x, (*it)->y, 16, 16, "eBullet",2,0.1));
-			  bulletSpawnTimer=0;
-			
-			}
-			}
-			}	
-
-		*/
-			
 			for (it = enemies.begin(); it != enemies.end(); it++)
 		{
 			(*it)->update(time); //запускаем метод update()
